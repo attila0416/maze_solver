@@ -42,55 +42,66 @@ def parse(lines):
         list -- contains list of lists of Cells
     """
     counter_x = count_character(lines, "X")
-    counter_y = count_character(lines, "Y")
+    if counter_x != 1:
+        raise ValueError("Expected 1 starting position, got {}.".format(lines.count("X")))
 
-    occurrences = [0] * 9
-    list_of_cells = [[]] * len(lines)
-    i = 0
-    while i < len(lines):
-        for entry in lines[i]:
-            if entry.isdigit():
-                int_entry = int(entry)
+    counter_y = count_character(lines, "Y")
+    if counter_y != 1:
+        raise ValueError("Expected 1 ending position, got {}.".format(lines.count("Y")))
+
+    possible_teleport_ids = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
+
+    check_teleport_pairs(possible_teleport_ids, lines)
+
+    grid = unsafe_parse(possible_teleport_ids, lines)
+    return grid
+
+
+def check_teleport_pairs(possible_teleport_ids, raw_lines):
+    occurrences = [0] * len(possible_teleport_ids)
+    for raw_line in raw_lines:
+        for raw_char in raw_line:
+            # Make sure teleports are in pairs
+            if raw_char.isdigit():
+                int_entry = int(raw_char)
                 for occurrence_index in range(0, len(occurrences)):
                     if int_entry == occurrence_index + 1:
                         occurrences[occurrence_index] += 1
                         break
-        j = 0
-        while j < len(lines[i]):
-            if lines[i][j] == "\n":
-                lines[i].pop(j)
-            if lines[i][j] == Start().display:
-                list_of_cells[i][j] = Start()
-            elif lines[i][j] == End().display:
-                list_of_cells[i][j] = End()
-            elif lines[i][j] == Air().display:
-                list_of_cells[i][j] = Air()
-            elif lines[i][j] == Wall().display:
-                list_of_cells[i][j] = Wall()
-            elif lines[i][j] == Fire().display:
-                list_of_cells[i][j] = Fire()
-            elif lines[i][j] == Water().display:
-                list_of_cells[i][j] = Water()
-            elif lines[i][j] in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
-                list_of_cells[i][j] = Teleport(int(lines[i][j]))
-
-            if lines[i][j] != "X" and \
-                    lines[i][j] != "Y" and \
-                    lines[i][j] != "F" and \
-                    lines[i][j] != "W":
-                raise ValueError("Bad letter in configuration file: {}.".format(lines[i][j]))
-            if counter_x != 1:
-                raise ValueError("Expected 1 starting position, got {}.".format(lines.count("X")))
-            if counter_y != 1:
-                raise ValueError("Expected 1 starting position, got {}.".format(lines.count("Y")))
-            j += 1
-        i += 1
     pad_num = 1
     for occurrence in occurrences:
         if occurrence != 0 and occurrence != 2:
             raise ValueError("Teleport pad {} does not have an exclusively matching pad.".format(pad_num))
         pad_num += 1
-    return list_of_cells
+
+
+def unsafe_parse(possible_teleport_ids, raw_lines):
+    grid = []
+    for raw_line in raw_lines:
+        new_line = []
+
+        for raw_char in raw_line:
+            if raw_char == "\n":
+                pass
+            elif raw_char == Start().display:
+                new_line.append(Start())
+            elif raw_char == End().display:
+                new_line.append(End())
+            elif raw_char == Air().display:
+                new_line.append(Air())
+            elif raw_char == Wall().display:
+                new_line.append(Wall())
+            elif raw_char == Fire().display:
+                new_line.append(Fire())
+            elif raw_char == Water().display:
+                new_line.append(Water())
+            elif raw_char in possible_teleport_ids:
+                new_line.append(Teleport(int(raw_char)))
+            else:
+                raise ValueError("Bad letter in configuration file: {}.".format(raw_char))
+
+        grid.append(new_line)
+    return grid
 
 
 def count_character(lines, character):

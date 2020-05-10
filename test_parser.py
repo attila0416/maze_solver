@@ -5,7 +5,7 @@ from cells import (
     Wall,
     Fire, Water, Teleport
 )
-from game_parser import parse
+from game_parser import parse, read_lines
 
 
 def test_parse_exactly_1_start_and_end():
@@ -35,6 +35,16 @@ def handle_new_line_chars():
     expected = [[Wall(), Start()],
                 [Wall(), End()]]
     assert actual == expected
+
+
+def test_text_file():
+    # actual = read_lines("board_hard.txt")
+    # expected = [[Wall(), Start(), Wall(), Wall(), Wall(), Wall(), Wall(), Wall(), Wall(), Wall(), Wall(), Wall(), Wall(), Wall(), Wall()],
+    #             [Wall(), Teleport(1), Air(), Teleport(4), Wall()],
+    #             [Wall(), Teleport(4), Teleport(1), Air(), Wall()],
+    #             [Wall(), Wall(), Wall(), End(), Wall()]]
+    # assert expected == actual, "Actual parser output <{}> did not match expected output.".format(grid_str(actual))
+    pass
 
 
 def test_parse():

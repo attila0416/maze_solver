@@ -43,11 +43,11 @@ def parse(lines):
     """
     counter_x = count_character(lines, "X")
     if counter_x != 1:
-        raise ValueError("Expected 1 starting position, got {}.".format(lines.count("X")))
+        raise ValueError("Expected 1 starting position, got {}.".format(counter_x))
 
     counter_y = count_character(lines, "Y")
     if counter_y != 1:
-        raise ValueError("Expected 1 ending position, got {}.".format(lines.count("Y")))
+        raise ValueError("Expected 1 ending position, got {}.".format(counter_y))
 
     possible_teleport_ids = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
